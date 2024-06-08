@@ -19,7 +19,7 @@ const createUser = asyncHandler(async (req,res)=>{
 
 //user login
 const loginUser = asyncHandler(async (req,res)=>{
-    const {email,password} = req.body;
+    const {email, password} = req.body;
     const findUser = await User.findOne({email: email})
     //console.log(findUser);
     if(findUser && await findUser.isPasswordMatch(password)){
@@ -61,8 +61,8 @@ const getUserById = asyncHandler(async (req,res)=>{
 
 //delete user by ID
 const deleteUserById = asyncHandler(async (req,res)=>{
+    //const {id} = req.user;
     const {id} = req.params;
-    console.log(id);
     try{
         const deleteUser = await User.findByIdAndDelete(id);
         res.send({deleteUser});
@@ -88,4 +88,41 @@ const updateUser = asyncHandler(async (req,res)=>{
         throw new Error(err);
     }
 })
-module.exports = {createUser, getUsers, loginUser, getUserById, deleteUserById, updateUser}
+
+//blockk user only admin can do this
+
+const blockUser = asyncHandler(async (req,res) => {
+    const {id} = req.params;
+    //console.log(id);
+    try{
+        await User.findByIdAndUpdate(id,{
+            isBlocked: true
+        },{
+            new: true
+        });
+        res.status(200).json({
+            message: "User blocked"
+        })
+    }catch(error){
+        throw new Error(error);
+    }
+})
+
+const unBlockUser = asyncHandler(async (req,res)=>{
+    const {id} = req.params;
+    //console.log(id);
+    try{
+        await User.findByIdAndUpdate(id,{
+            isBlocked: false
+        },{
+            new: true
+        });
+        res.status(200).json({
+            message: "User unblocked"
+        })
+    }catch(error){
+        throw new Error(error);
+    }
+})
+
+module.exports = {createUser, getUsers, loginUser, getUserById, deleteUserById, updateUser, blockUser, unBlockUser}

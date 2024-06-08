@@ -23,7 +23,6 @@ var userSchema = new mongoose.Schema({
     mobile:{
         type:String,
         required:true,
-        unique:true,
     },
     password:{
         type:String,
@@ -37,6 +36,12 @@ var userSchema = new mongoose.Schema({
         type: Array,
         default: []
     },
+    address: [{type: mongoose.Schema.Types.ObjectId, ref:"Address"}],
+    wishlist: [{type: mongoose.Schema.Types.ObjectId, ref:"product"}],
+    isBlocked:{
+        type: Boolean,
+        default: false
+    }
 },{
     timestamps: true,
 });
